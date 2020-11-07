@@ -25,14 +25,9 @@
     }
     </style>
     <!-- Load file Javascript FontAwesome, Bootstrap & jQuery -->
-    <script src=" <?php echo base_url('assets/js/fontawesome.js');?> "></script>
+    <script src  = "<?php echo base_url('assets/js/fontawesome.js');?>"></script>
     <script src  = "<?php echo base_url('assets/js/jquery.js'); ?>"></script>
     <script src  = "<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
-    <script type = "text/javascript">
-        $( document ).ready(function() {
-            $("#nav-<?php echo $curr_page; ?>").addClass('active');
-        });
-    </script>
 </head>
 <body>
     <!-- Fixed navbar -->
