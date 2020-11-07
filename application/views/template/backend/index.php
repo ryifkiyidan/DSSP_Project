@@ -8,7 +8,7 @@
     <meta name = "description" content = "Project">
     <meta name = "author" content      = "WeAre">
     
-    <title>My School</title>
+    <title>DSSP - <?php echo ucwords($curr_page);?></title>
 
     <!-- Load File CSS Bootstrap  -->
     <link href = "<?php echo base_url('assets/css/bootstrap.min.css'); ?>" rel = "stylesheet">
@@ -41,7 +41,7 @@
     * Variabel $headernya diambil dari core MY_Controller
     * (application/core/MY_Controller.php)
     * */
-    echo $headernya;
+        if($curr_page !== "login") echo $headernya;
     ?>
 
     <div class = "<?php echo ($curr_page != "home" && $curr_page != "profile" ? "container-fluid" : "container"); ?>">

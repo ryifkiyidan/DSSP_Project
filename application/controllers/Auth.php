@@ -8,9 +8,9 @@ class Auth extends MY_Controller {
     public function index(){
         if($this->session->userdata('authenticated')) // Jika user sudah login (Session authenticated ditemukan)
             redirect('page/home'); // Redirect ke page home
-        
-        // function render_login tersebut dari file core/MY_Controller.php
-        $this->render_login('login'); // Load view login.php
+            
+        $data['curr_page'] = "login";
+        $this->render_backend('login', $data); // Load view login.php
     }
     public function login(){
 
