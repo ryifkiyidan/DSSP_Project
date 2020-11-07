@@ -1,9 +1,5 @@
 <style>
 
-a{
-    color: white;
-}
-
 .active{
     color: rgba(255,255,255,1) !important;
 }
@@ -64,7 +60,7 @@ a.nav-link:active {
     width: 0;
     caret-color:transparent;
     line-height: 40px;
-    transition: width 0.4s linear;
+    transition: width 0.25s linear;
 }
 
 .searchbar:hover{
@@ -75,7 +71,7 @@ a.nav-link:active {
     padding: 0 10px;
     width: 300px;
     caret-color:red;
-    transition: width 0.4s linear;
+    transition: width 0.25s linear;
 }
 
 .searchbar:hover > .search_icon{
@@ -102,7 +98,7 @@ a.nav-link:active {
 </script>
 <div class="container-fluid p-0">
     <nav class="navbar navbar-expand-md navbar-danger bg-danger fixed-top">
-        <a class="navbar-brand active" href="<?php echo base_url('index.php/page/home'); ?>"><i class="fad fa-school fa-2x"></i> DSSP</a>
+        <a class="navbar-brand active" href="<?php echo base_url('index.php/page/home'); ?>"><i class="fad fa-file-signature"></i> DSSP</a>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -145,7 +141,5 @@ a.nav-link:active {
             </div>
 
         </div>
-        
-        
     </nav>
 </div>

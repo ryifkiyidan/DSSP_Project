@@ -21,13 +21,14 @@
     <style>
     body {
         min-height : 2000px;
-        padding-top: 120px;
+        padding-top: 70px;
     }
     </style>
     <!-- Load file Javascript FontAwesome, Bootstrap & jQuery -->
     <script src  = "<?php echo base_url('assets/js/fontawesome.js');?>"></script>
     <script src  = "<?php echo base_url('assets/js/jquery.js'); ?>"></script>
     <script src  = "<?php echo base_url('assets/js/bootstrap.min.js'); ?>"></script>
+
 </head>
 <body>
     <!-- Fixed navbar -->
@@ -39,14 +40,13 @@
         if($curr_page !== "login") echo $headernya;
     ?>
 
-    <div class = "<?php echo ($curr_page != "home" && $curr_page != "profile" ? "container-fluid" : "container"); ?>">
-        <?php
-        /*
-        * Variabel $contentnya diambil dari core MY_Controller
-        * (application/core/MY_Controller.php)
-        * */
-        echo $contentnya;
-        ?>
+    <div class="row">
+        <div class="col-md-3 col-lg-2 d-none d-md-block bg-light position-fixed p-0" style="height: 100%;">
+            <?php if($curr_page !== "login") echo $sidebarnya; ?>
+        </div>
+        <div class="col-md-9 ml-sm-auto col-lg-10 p-5">
+            <?php echo $contentnya; ?>
+        </div>
     </div>
 </body>
 </html>

@@ -20,6 +20,7 @@ class MY_Controller extends CI_Controller{
         * */
 
         $data['headernya']  = $this->load->view('template/backend/header', $data, TRUE);
+        $data['sidebarnya']  = $this->load->view('template/backend/sidebar', $data, TRUE);
         $data['contentnya'] = $this->load->view($content, $data, TRUE);
         $this->load->view('template/backend/index', $data);
     }
