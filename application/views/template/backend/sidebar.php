@@ -46,40 +46,40 @@
     <h5 class="mb-2 text-center"><?php echo ucwords($curr_page); ?></h5>
     <a class="btn btn-outline-danger side-item align-center" href="#">
       <div class="row" style="width: 100%;">
-        <div class="col-md-3 p-0 pr-1 align-center-right">
+        <div class="col-md-4 p-0  align-center">
           <i class="fas fa-th"></i>
         </div>
-        <div class="col-md-9 p-0 pl-1 align-center-left">
+        <div class="col-md-8 p-0  align-center-left">
           All Documents
         </div>
       </div>
     </a>
     <a class="btn btn-outline-danger side-item align-center" href="#">
       <div class="row" style="width: 100%;">
-        <div class="col-md-3 p-0 pr-1 align-center-right">
+        <div class="col-md-4 p-0  align-center">
           <i class="fas fa-check"></i>
         </div>
-        <div class="col-md-9 p-0 pl-1 align-center-left">
+        <div class="col-md-8 p-0  align-center-left">
           Approved Documents
         </div>
       </div>
     </a>
     <a class="btn btn-outline-danger side-item align-center" href="#">
       <div class="row" style="width: 100%;">
-        <div class="col-md-3 p-0 pr-1 align-center-right">
+        <div class="col-md-4 p-0  align-center">
           <i class="fas fa-times"></i>
         </div>
-        <div class="col-md-9 p-0 pl-1 align-center-left">
+        <div class="col-md-8 p-0  align-center-left">
           Rejected Documents
         </div>
       </div>
     </a>
     <a class="btn btn-outline-danger side-item align-center" href="#">
       <div class="row" style="width: 100%;">
-        <div class="col-md-3 p-0 pr-1 align-center-right">
+        <div class="col-md-4 p-0  align-center">
           <i class="fas fa-redo"></i>
         </div>
-        <div class="col-md-9 p-0 pl-1 align-center-left">
+        <div class="col-md-8 p-0  align-center-left">
           Pending Documents
         </div>
       </div>
