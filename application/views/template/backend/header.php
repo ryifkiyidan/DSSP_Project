@@ -130,12 +130,14 @@ a.nav-link:active {
             
             <div class="navbar-nav ml-auto">
                 <div class="d-flex justify-content-center h-100">
+                    <div class="itemleft">
+                        <a class="nav-link" href="<?php echo base_url('index.php/auth/logout'); ?>" id = "nav-notification" >
+                            <i class="fas fa-bell"></i>
+                        </a>
+                    </div>
                     <div class="searchbar">
                         <input class="search_input" type="text" name="" placeholder="Search Document...">
                         <a href="#" class="search_icon"><i class="fas fa-search"></i></a>
-                    </div>
-                    <div class="itemleft">
-                        <a class="nav-link" href="<?php echo base_url('index.php/auth/logout'); ?>" id = "nav-logout" >Logout</a>
                     </div>
                 </div>
             </div>
