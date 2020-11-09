@@ -39,14 +39,21 @@
     * */
         if($curr_page !== "login") echo $headernya;
     ?>
-
+    <?php if($curr_page !== "login"){ ?>
     <div class="row">
         <div class="col-md-3 col-lg-2 d-none d-md-block bg-light position-fixed p-0" style="height: 100%;">
-            <?php if($curr_page !== "login") echo $sidebarnya; ?>
+            <?php echo $sidebarnya; ?>
         </div>
         <div class="col-md-9 ml-sm-auto col-lg-10 p-5">
             <?php echo $contentnya; ?>
         </div>
     </div>
+    <?php }else{ ?>
+        <div class="row">
+            <div class="col-md-12 p-5">
+                <?php echo $contentnya; ?>
+            </div>
+        </div>
+    <?php } ?>
 </body>
 </html>

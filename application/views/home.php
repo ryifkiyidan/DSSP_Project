@@ -1,15 +1,66 @@
 <style>
-    .btn-square { 
-        width        : 200px;
-        height       : 200px;
-        border-radius: 0;
-        font-size    : 20px;
-    } 
+.btn-square { 
+    width        : 200px;
+    height       : 200px;
+    border-radius: 0;
+    font-size    : 20px;
+} 
+.inputfile {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+.btn-upload-plus{
+    border-radius: 0 25px 25px 0; 
+    margin-left: -4px;
+    margin-bottom: 0;
+}
+.btn-upload-submit{
+    border-radius: 25px 0 0 25px;
+}
 </style>
+<script>
+function validateFile(){
+    var file = fileToUpload.value;
+    var len = file.length;
+    var ext = file.slice(len - 4, len);
+    if(ext.toUpperCase() == ".PDF"){
+        $('#fileName').html("<b>" + fileToUpload.value + "</b>");
+        $('.btn-upload-submit').removeAttr('disabled');
+        $('.btn-upload-submit').html('Upload Document');
+        $('.btn-upload-plus').children().removeClass('fa-plus fa-times');
+        $('.btn-upload-plus').children().addClass('fa-check');
+    }
+    else{
+        $('#fileName').html("<b>" + fileToUpload.value + "</b>");
+        $('.btn-upload-submit').attr('disabled', "true");
+        $('.btn-upload-submit').html('PDF File Only');
+        $('.btn-upload-plus').children().removeClass('fa-plus fa-check');
+        $('.btn-upload-plus').children().addClass('fa-times');
+    }
+}
+setTimeout(function(){
+  if ($('#alert').length > 0) {
+    $('#alert').remove();
+  }
+}, 10000)
+</script>
 <?php
+
 // Cek role user
 if($this->session->userdata('role') == 'admin'){ // Jika role-nya admin
+    if($this->session->flashdata('data')){ // Jika ada
+        $div_success = '<div id="alert" class="alert alert-success">';
+        $div_danger = '<div id="alert" class="alert alert-danger">';
+        $content = $this->session->flashdata('data')['msg'].'</div>';
+        if($this->session->flashdata('data')['status']) echo $div_success.$content;
+        else echo $div_danger.$content;
+    }
     ?>
+    
     <div class="container align-center mb-5">
       <div class="row bg-light p-5" style="border-radius: 25px; width: 75%;">
           <div class="col-md-12">
@@ -18,10 +69,14 @@ if($this->session->userdata('role') == 'admin'){ // Jika role-nya admin
                     <h4>Upload Your Document</h4>
                     <p>Upload document and share your documents with others</p>
                     <br>
-                    <a class="btn btn-danger btn-lg" href="#" style="border-radius: 25px;">
-                        Upload Document
-                        <i class="fas fa-plus ml-2"></i>
-                    </a>
+                    <div>
+                        <form action="<?php echo base_url('index.php/action/file_upload'); ?>" method="post" enctype="multipart/form-data">
+                            <p id="fileName" style="font-size: 12px; margin-bottom: 5px;"></p>
+                            <input type="file" name="fileToUpload" id="fileToUpload" class="inputfile" onChange="validateFile()" accept="application/pdf"/>
+                            <button class="btn btn-danger btn-upload-submit" type="submit" disabled>Upload Document</button>
+                            <label class="btn btn-danger btn-upload-plus" for="fileToUpload"><i class="fas fa-plus"></i></label>
+                        </form>
+                    </div>
                   </div>
                   <div class="col-md-6 align-center">
                     <i class="fad fa-file-upload fa-10x"></i>
