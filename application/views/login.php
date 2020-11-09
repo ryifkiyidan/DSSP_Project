@@ -35,8 +35,8 @@ if($this->session->flashdata('message')){ // Jika ada
     <h2  class = "form-signin-heading">Silahkan login</h2>
     <form method = "post" action = "<?php echo base_url('index.php/auth/login'); ?>">
     <div class = "form-group">
-        <label>Username</label>
-        <input type = "text" class = "form-control" name = "username" placeholder = "Username" required autofocus>
+        <label>Email</label>
+        <input type = "text" class = "form-control" name = "email" placeholder = "Email" required autofocus>
     </div>
     <div class = "form-group">
         <label>Password</label>

@@ -297,7 +297,7 @@ class Page extends MY_Controller {
         //Table
         $table = $role;
         
-        $this->UserModel->update_data($where, $data, $table);
+        $this->UserModel->updateData($where, $data, $table);
 
         $this->session->set_flashdata('message', 'Profile has changed successfully');
 
@@ -334,7 +334,7 @@ class Page extends MY_Controller {
             //Table
             $table = $role;
             
-            $this->UserModel->update_data($where, $data, $table);
+            $this->UserModel->updateData($where, $data, $table);
 
             $this->session->set_flashdata('message', 'Password has changed successfully');
 

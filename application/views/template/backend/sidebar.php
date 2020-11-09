@@ -39,7 +39,8 @@
   <div class="text-center mb-5">
     <i class="fad fa-user-circle fa-6x mb-3"></i>
     <br>
-    <h6>Nama User</h6>
+    <h6><?php echo ucwords($this->session->userdata('first_name').' '.$this->session->userdata('last_name')); ?></h6>
+    <h8><?php echo ucwords($this->session->userdata('role')); ?></h8>
   </div>
 
   <div>

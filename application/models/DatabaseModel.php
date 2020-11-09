@@ -30,60 +30,35 @@ class DatabaseModel extends CI_Model {
     }
 
     public function getLastId($table){
-        $this->db->select('id');
-        $this->db->order_by('id', 'DESC');
-        $this->db->limit(1);
-        $data = $this->db->get($table)->row();
-        if($data == NULL){
-            return NULL;
-        }else{
-            return $data->id;
+        if($table === 'direksi'){
+            $this->db->select('direksi_id');
+            $this->db->order_by('direksi_id', 'DESC');
+            $this->db->limit(1);
+            $data = $this->db->get($table)->row();
+            if($data == NULL){
+                return NULL;
+            }else{
+                return $data->direksi_id;
+            }
+        } 
+        else if ($table === 'finance'){
+            $this->db->select('finance_id');
+            $this->db->order_by('finance_id', 'DESC');
+            $this->db->limit(1);
+            $data = $this->db->get($table)->row();
+            if($data == NULL){
+                return NULL;
+            }else{
+                return $data->finance_id;
+            }
         }
     }
 
-    public function getKelas($id=NULL){
-        $this->db->where('id', $id);
-        $data = $this->db->get('kelas')->row();
-
+    public function getAllTable($id=NULL, $table){
+        $this->db->where($table.'_id', $id);
+        $data = $this->db->get($table)->row();
         return $data;
-    }
-
-    public function getLesson($id=NULL){
-        $this->db->where('id', $id);
-        $data = $this->db->get('lesson')->row();
-
-        return $data;
-    }
-
-    public function getMatPel($id=NULL){
-        $this->db->where('id', $id);
-        $data = $this->db->get('mata_pelajaran')->row();
-
-        return $data;
-    }
-
-    public function getGuru($id=NULL){
-        $this->db->where('nip', $id);
-        $data = $this->db->get('guru')->row();
-
-        return $data;
-    }
-
-    public function getSiswa($id=NULL){
-        $this->db->where('nisn', $id);
-        $data = $this->db->get('siswa')->row();
-
-        return $data;
-    }
-
-    public function getSiswas($id=NULL){
-        $this->db->where('kelasID', $id);
-        $data = $this->db->get('siswa');
-
-        return $data;
-    }
-
-    
+    }    
 
 }
 ?>
