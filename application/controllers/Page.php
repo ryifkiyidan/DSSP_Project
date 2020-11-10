@@ -1,9 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 class Page extends MY_Controller {
-
+    public function __construct(){
+        parent:: __construct();
+        $this->load->model('DatabaseModel');
+    }
     public function home(){
         $data['curr_page'] = "home";
+        $data['direksi'] = $this->DatabaseModel->getDatas('direksi');
         // function render_backend tersebut dari file core/MY_Controller.php
         $this->render_backend('home', $data); // load view home.php
     }

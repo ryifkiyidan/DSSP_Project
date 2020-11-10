@@ -29,17 +29,17 @@ function validateFile(){
     var ext = file.slice(len - 4, len);
     if(ext.toUpperCase() == ".PDF"){
         $('#fileName').html("<b>" + fileToUpload.value + "</b>");
-        $('.btn-upload-submit').removeAttr('disabled');
         $('.btn-upload-submit').html('Upload Document');
         $('.btn-upload-plus').children().removeClass('fa-plus fa-times');
         $('.btn-upload-plus').children().addClass('fa-check');
+        $('.btn-upload-submit').removeAttr('disabled');
     }
     else{
         $('#fileName').html("<b>" + fileToUpload.value + "</b>");
-        $('.btn-upload-submit').attr('disabled', "true");
         $('.btn-upload-submit').html('PDF File Only');
         $('.btn-upload-plus').children().removeClass('fa-plus fa-check');
         $('.btn-upload-plus').children().addClass('fa-times');
+        $('.btn-upload-submit').attr('disabled', 'true');
     }
 }
 setTimeout(function(){
@@ -51,7 +51,7 @@ setTimeout(function(){
 <?php
 
 // Cek role user
-if($this->session->userdata('role') == 'finance'){ // Jika role-nya admin
+if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
     if($this->session->flashdata('data')){ // Jika ada
         $div_success = '<div id="alert" class="alert alert-success">';
         $div_danger = '<div id="alert" class="alert alert-danger">';
@@ -59,26 +59,33 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya admin
         if($this->session->flashdata('data')['status']) echo $div_success.$content;
         else echo $div_danger.$content;
     }
-    ?>
+?>
     
     <div class="container align-center mb-5">
       <div class="row bg-light p-5" style="border-radius: 25px; width: 75%;">
           <div class="col-md-12">
               <div class="row">
-                  <div class="col-md-6 text-center">
+                  <div class="col-lg-6 text-center">
                     <h4>Upload Your Document</h4>
-                    <p>Upload document and share your documents with others</p>
-                    <br>
-                    <div>
+                    Upload document and share your documents with others
+                    <div class="mt-5">
                         <form action="<?php echo base_url('index.php/action/file_upload'); ?>" method="post" enctype="multipart/form-data">
-                            <p id="fileName" style="font-size: 12px; margin-bottom: 5px;"></p>
+                            <select name="direksi" class="custom-select mb-3" required>
+                                <option selected disabled>Direksi</option>
+                                <option value="<?php echo $direksi->direksi_id;?>"><?php echo ucwords($direksi->first_name.' '.$direksi->last_name.' - '.$direksi->divisi); ?></option>
+                            </select>
                             <input type="file" name="fileToUpload" id="fileToUpload" class="inputfile" onChange="validateFile()" accept="application/pdf"/>
-                            <button class="btn btn-danger btn-upload-submit" type="submit" disabled>Upload Document</button>
-                            <label class="btn btn-danger btn-upload-plus" for="fileToUpload"><i class="fas fa-plus"></i></label>
+                            <div>
+                                <div class="row">
+                                    <div class="col-sm-10 p-0 m-0"><button class="btn btn-danger btn-upload-submit btn-block" type="submit" disabled>Upload Document</button></div>
+                                    <div class="col-sm-2 p-0 m-0"><label class="btn btn-danger btn-upload-plus btn-block" for="fileToUpload"><i class="fas fa-plus"></i></label></div>
+                                </div>    
+                            </div>
+                            <div id="fileName" style="font-size: 12px;"></div>
                         </form>
                     </div>
                   </div>
-                  <div class="col-md-6 align-center">
+                  <div class="col-lg-6 align-center mt-2">
                     <i class="fad fa-file-upload fa-10x"></i>
                   </div>
               </div>

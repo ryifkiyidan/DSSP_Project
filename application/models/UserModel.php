@@ -19,15 +19,15 @@ class UserModel extends CI_Model {
 
     }
 
-    public function getProfile($email, $role){
+    public function getUser($email, $role){
 
         if($role == 'direksi'){
             $this->db->where('email', $email);
-            $data['user'] = $this->db->get('direksi')->row();
+            $data = $this->db->get('direksi')->row();
         }
         else if($role == 'finance'){
             $this->db->where('email', $email);
-            $data['user'] = $this->db->get('finance')->row();
+            $data = $this->db->get('finance')->row();
         }
 
         return $data;

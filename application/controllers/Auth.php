@@ -31,7 +31,7 @@ class Auth extends MY_Controller {
             }else{ // Jika password yang diinput sama dengan password yang didatabase
                 $session = array(
                     'authenticated' => true,                        // Buat session authenticated dengan value true
-                    'email'      => $data['user']->email,           // Buat session email
+                    'email'         => $data['user']->email,        // Buat session email
                     'first_name'    => $data['user']->first_name,   // Buat session fname
                     'last_name'     => $data['user']->last_name,    // Buat session lname
                     'role'          => $data['role']                // Buat session role

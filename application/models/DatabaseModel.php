@@ -30,35 +30,43 @@ class DatabaseModel extends CI_Model {
     }
 
     public function getLastId($table){
-        if($table === 'direksi'){
-            $this->db->select('direksi_id');
-            $this->db->order_by('direksi_id', 'DESC');
-            $this->db->limit(1);
-            $data = $this->db->get($table)->row();
-            if($data == NULL){
-                return NULL;
-            }else{
-                return $data->direksi_id;
-            }
-        } 
-        else if ($table === 'finance'){
-            $this->db->select('finance_id');
-            $this->db->order_by('finance_id', 'DESC');
-            $this->db->limit(1);
-            $data = $this->db->get($table)->row();
-            if($data == NULL){
-                return NULL;
-            }else{
-                return $data->finance_id;
-            }
+        $this->db->select($table.'_id');
+        $this->db->order_by($table.'_id', 'DESC');
+        $this->db->limit(1);
+        $data = $this->db->get($table)->row();
+        if($data == NULL){
+            return NULL;
+        }else{
+            if($table === 'direksi') return $data->direksi_id;
+            else if($table === 'finance') return $data->finance_id;
+            else if($table === 'dokumen') return $data->dokumen_id;
         }
     }
 
-    public function getAllTable($id=NULL, $table){
+    public function getNumRows($table){
+        $data = $this->db->get($table);
+        return $data->num_rows();
+    }
+
+    public function getDatas($table){
+        $data = $this->db->get($table)->row();
+        return $data;
+    }
+    
+    public function getData($table, $id){
         $this->db->where($table.'_id', $id);
         $data = $this->db->get($table)->row();
         return $data;
-    }    
+    }
+    
+    public function insertData($table, $data){
+		$this->db->insert($table,$data);
+    }
+
+    public function updateData($where, $table, $data){
+        $this->db->where($where);
+		$this->db->update($table,$data);
+    }
 
 }
 ?>
