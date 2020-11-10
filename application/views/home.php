@@ -72,7 +72,12 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                         <form action="<?php echo base_url('index.php/action/file_upload'); ?>" method="post" enctype="multipart/form-data">
                             <select name="direksi" class="custom-select mb-3" required>
                                 <option selected disabled>Direksi</option>
-                                <option value="<?php echo $direksi->direksi_id;?>"><?php echo ucwords($direksi->first_name.' '.$direksi->last_name.' - '.$direksi->divisi); ?></option>
+                                <!-- Loop Direksi -->
+                                <?php
+                                    foreach($direksi->result() as $dir){
+                                        echo '<option value="'.$dir->direksi_id.'">'.ucwords($dir->first_name.' '.$dir->last_name.' - '.$dir->divisi).'</option>';
+                                    } 
+                                ?>
                             </select>
                             <input type="file" name="fileToUpload" id="fileToUpload" class="inputfile" onChange="validateFile()" accept="application/pdf"/>
                             <div>

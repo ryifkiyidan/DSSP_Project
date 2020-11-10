@@ -33,7 +33,7 @@ class DatabaseModel extends CI_Model {
         $this->db->select($table.'_id');
         $this->db->order_by($table.'_id', 'DESC');
         $this->db->limit(1);
-        $data = $this->db->get($table)->row();
+        $data = $this->db->get($table);
         if($data == NULL){
             return NULL;
         }else{
@@ -49,13 +49,13 @@ class DatabaseModel extends CI_Model {
     }
 
     public function getDatas($table){
-        $data = $this->db->get($table)->row();
+        $data = $this->db->get($table);
         return $data;
     }
     
     public function getData($table, $id){
         $this->db->where($table.'_id', $id);
-        $data = $this->db->get($table)->row();
+        $data = $this->db->get($table);
         return $data;
     }
     
