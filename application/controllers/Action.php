@@ -20,8 +20,9 @@ class Action extends MY_Controller {
                     $file_id = md5('dok'.($this->DatabaseModel->getNumRows('dokumen')+1));
                     $file_name = basename($_FILES['fileToUpload']['name']);
                     $file_ext = end(explode(".", $_FILES["fileToUpload"]["name"]));
-                    $file_loc = $_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project/assets/uploads/files/";
+                    $file_loc = './assets/uploads/files/';
                     $file_loc = $file_loc . $file_id . '.' . $file_ext;
+                    $file_loc2 = '/assets/uploads/files/' . $file_id . '.' . $file_ext;
                     if (in_array($file_ext, $allowedExts)){
                         if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file_loc)) {
                             $msg = "The file " . $file_name . " has been uploaded successfully";
@@ -36,8 +37,8 @@ class Action extends MY_Controller {
                                     'PageRange' => '1',
                                 ], 'pdf'
                             ); 
-                            $result->saveFiles($_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project/assets/uploads/thumbnails");
-                            $thumbnail_loc = $_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project/assets/uploads/thumbnails/" . $file_id . '.jpg';
+                            $result->saveFiles('./assets/uploads/thumbnails');
+                            $thumbnail_loc = '/assets/uploads/thumbnails/' . $file_id . '.jpg';
                             
                             // insert to database
                             // Data
@@ -55,7 +56,7 @@ class Action extends MY_Controller {
                                 'direksi_id' => $direksi_id,
                                 'signature_id' => NULL,
                                 'name' => substr($file_name, 0, strrpos($file_name, '.')),
-                                'location' => $file_loc,
+                                'location' => $file_loc2,
                                 'thumbnail' => $thumbnail_loc,
                                 'upload_date' => strtotime("now"),
                                 'due_date' => strtotime("+1 week"),
@@ -80,13 +81,13 @@ class Action extends MY_Controller {
             $data['msg'] = $msg;
             $data['status'] = $uploadOk;
             $this->session->set_flashdata('data', $data);
-            redirect('page/home');
+            redirect('page/dashboard');
         }else{
             $data['msg'] = 'Something went wrong';
             if($direksi_id === NULL) $data['msg'] = 'Direksi field cannot be empty';
             $data['status'] = false;
             $this->session->set_flashdata('data', $data);
-            redirect('page/home');
+            redirect('page/dashboard');
         }
     }
 }

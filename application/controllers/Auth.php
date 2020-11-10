@@ -7,7 +7,7 @@ class Auth extends MY_Controller {
     }
     public function index(){
         if($this->session->userdata('authenticated')) // Jika user sudah login (Session authenticated ditemukan)
-            redirect('page/home'); // Redirect ke page home
+            redirect('page/dashboard'); // Redirect ke page dashboard
             
         $data['curr_page'] = "login";
         $this->render_backend('login', $data); // Load view login.php
@@ -40,7 +40,7 @@ class Auth extends MY_Controller {
                 else if($data['role'] == 'siswa') $session['nomor_induk'] = $data['user']->nisn;
 
                 $this->session->set_userdata($session); // Buat session sesuai $session
-                redirect('page/home'); // Redirect ke halaman home
+                redirect('page/dashboard'); // Redirect ke halaman dashboard
             }
         }
     }

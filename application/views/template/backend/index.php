@@ -20,7 +20,7 @@
     <![endif]-->
     <style>
     body {
-        min-height : 2000px;
+        min-height : 1200px;
         padding-top: 70px;
     }
     </style>
