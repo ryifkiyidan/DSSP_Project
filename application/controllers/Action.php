@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require $_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project" . '/vendor/convertapi/convertapi-php/lib/ConvertApi/autoload.php';
+require $_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project" . '/vendor/autoload.php';
 use \ConvertApi\ConvertApi;
 class Action extends MY_Controller {
     public function __construct(){
@@ -89,7 +89,7 @@ class Action extends MY_Controller {
         ); 
         $result->saveFiles('./assets/uploads/thumbnails');
         $thumbnail_loc = '/assets/uploads/thumbnails/' . $file_id . '.jpg';
-        instantiate Imagick 
+        return $thumbnail_loc;
     }
 }
 ?>
