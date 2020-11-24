@@ -105,16 +105,18 @@ setTimeout(function(){
 }, 10000)
 </script>
 <?php
-if($this->session->flashdata('data')){ // Jika ada
-    $div_success = '<div id="alert" class="alert alert-success">';
-    $div_danger = '<div id="alert" class="alert alert-danger">';
-    $content = $this->session->flashdata('data')['msg'].'</div>';
-    if($this->session->flashdata('data')['status']) echo $div_success.$content;
-    else echo $div_danger.$content;
-}
+
+// Cek role user
+if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
+    if($this->session->flashdata('data')){ // Jika ada
+        $div_success = '<div id="alert" class="alert alert-success">';
+        $div_danger = '<div id="alert" class="alert alert-danger">';
+        $content = $this->session->flashdata('data')['msg'].'</div>';
+        if($this->session->flashdata('data')['status']) echo $div_success.$content;
+        else echo $div_danger.$content;
+    }
 ?>
-    <!-- Upload Document Container -->
-    <?php if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance ?>
+    
     <div class="container align-center mb-5">
       <div class="row bg-light p-5" style="border-radius: 25px; width: 75%;">
           <div class="col-md-12">
@@ -152,10 +154,6 @@ if($this->session->flashdata('data')){ // Jika ada
       </div>
     </div>
     <hr/>
-    <?php
-    }
-    ?>
-    <!-- Document Container -->
     <div class="container p-5 bg-light mt-5" style="border-radius: 25px;">
       <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
       <div class="row pt-5 mx-5">
@@ -207,8 +205,16 @@ if($this->session->flashdata('data')){ // Jika ada
         ?>
       </div>
     </div>
+
+    <?php
+}else if($this->session->userdata('role') == 'direksi'){ // Jika role-nya direksi
+    ?>
+    <h3 class="text-center py-5"> -- Direksi Panel --</h3>
 <?php
-    // Function
+}
+?>
+<?php
+    //Function
     function getDireksiById($direksi, $direksi_id){
         foreach($direksi->result() as $dir){
             if($dir->direksi_id === $direksi_id){
