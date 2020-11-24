@@ -27,28 +27,13 @@ class Action extends MY_Controller {
                         if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file_loc)) {
                             $msg = "The file " . $file_name . " has been uploaded successfully";
                             $uploadOk = true;
-                            // generate thumbnail
-                            // pastikan sudah menjalankan command "composer require convertapi/convertapi-php"
-                            // tanpa tanda kutip
-                            ConvertApi::setApiSecret('oZ5quO9fgxMI8b4s');
-                            $result = ConvertApi::convert('thumbnail', [
-                                    'File' => $file_loc,
-                                    'FileName' => $file_id,
-                                    'PageRange' => '1',
-                                ], 'pdf'
-                            ); 
-                            $result->saveFiles('./assets/uploads/thumbnails');
-                            $thumbnail_loc = '/assets/uploads/thumbnails/' . $file_id . '.jpg';
+                            
+                            // generate thumbnail and get path location image
+                            $thumbnail_loc = $this->generateThumbnail($file_loc, $file_id);
                             
                             // insert to database
                             // Data
                             date_default_timezone_set("Asia/Jakarta");
-
-                            //date('m/d/Y H:i:s', strtotime("now"));
-                            //strtotime("now");
-
-                            //date('m/d/Y H:i:s', strtotime("+1 week"));
-                            //strtotime("+1 week");
                             $user = $this->UserModel->getUser($this->session->userdata('email'), 'finance');
                             $data = array(
                                 'dokumen_id' => $file_id,
@@ -89,6 +74,22 @@ class Action extends MY_Controller {
             $this->session->set_flashdata('data', $data);
             redirect('page/dashboard');
         }
+    }
+
+    public function generateThumbnail($file_loc, $file_id){
+        // generate thumbnail
+        // pastikan sudah menjalankan command "composer require convertapi/convertapi-php"
+        // tanpa tanda kutip
+        ConvertApi::setApiSecret('oZ5quO9fgxMI8b4s');
+        $result = ConvertApi::convert('thumbnail', [
+                'File' => $file_loc,
+                'FileName' => $file_id,
+                'PageRange' => '1',
+            ], 'pdf'
+        ); 
+        $result->saveFiles('./assets/uploads/thumbnails');
+        $thumbnail_loc = '/assets/uploads/thumbnails/' . $file_id . '.jpg';
+        instantiate Imagick 
     }
 }
 ?>
