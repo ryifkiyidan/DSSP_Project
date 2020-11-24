@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-require $_SERVER['DOCUMENT_ROOT'] . "/DSSP_Project" . '/vendor/autoload.php';
+require $_SERVER['DOCUMENT_ROOT'] . '/DSSP_Project' . '/vendor/autoload.php';
 use \ConvertApi\ConvertApi;
+use Ilovepdf\Ilovepdf;
 class Action extends MY_Controller {
     public function __construct(){
         parent:: __construct();
@@ -90,6 +91,26 @@ class Action extends MY_Controller {
         $result->saveFiles('./assets/uploads/thumbnails');
         $thumbnail_loc = '/assets/uploads/thumbnails/' . $file_id . '.jpg';
         return $thumbnail_loc;
+    }
+
+    public function addSignature(){
+        // Create a new task
+        $project_id = 'project_public_28ee5d7c5e37cbc2f53fdbed954d36c9_FvWHLc3bf23eedb62e726f8987fa0f4840764';
+        $project_key = 'secret_key_bc34ba5b399de41180ad0d5d9403baa2_I9L5j2d8789a22e0395179ecb8373b6ac6b10';
+        $ilovepdf = new Ilovepdf($project_id,$project_key);
+        $myTaskWatermark = $ilovepdf->newTask('watermark');
+        // Add files to task for upload
+        $file1 = $myTaskWatermark->addFile($file_loc);
+        // Add Image to task
+        $image = $myTaskWatermark->addFile('./assets/signature.png');
+        // set mode to image
+        $myTaskWatermark->setMode("image");
+        // Select watermark parameters
+        $myTaskWatermark->setImage($image->server_filename);
+        // Execute the task
+        $myTaskWatermark->execute();
+        // Download the package files
+        $myTaskWatermark->download();
     }
 }
 ?>

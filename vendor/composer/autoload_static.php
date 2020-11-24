@@ -29,10 +29,18 @@ class ComposerStaticInit839e85eae3848c834382e2ba497a8e68
         array (
             'Prophecy\\' => 9,
         ),
+        'I' => 
+        array (
+            'Ilovepdf\\' => 9,
+        ),
         'D' => 
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
+        ),
+        'A' => 
+        array (
+            'Ajaxray\\PHPWatermark\\' => 21,
         ),
     );
 
@@ -59,6 +67,10 @@ class ComposerStaticInit839e85eae3848c834382e2ba497a8e68
         array (
             0 => __DIR__ . '/..' . '/phpspec/prophecy/src/Prophecy',
         ),
+        'Ilovepdf\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ilovepdf/ilovepdf-php/src',
+        ),
         'Doctrine\\Instantiator\\' => 
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
@@ -66,6 +78,10 @@ class ComposerStaticInit839e85eae3848c834382e2ba497a8e68
         'DeepCopy\\' => 
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
+        ),
+        'Ajaxray\\PHPWatermark\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/ajaxray/php-watermark/src/Ajaxray/PHPWatermark',
         ),
     );
 
