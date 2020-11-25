@@ -9,7 +9,10 @@ class Action extends MY_Controller {
         $this->load->model('DatabaseModel');
         $this->load->model('UserModel');
     }
+
     public function file_upload(){
+        if($this->session->userdata('role') != 'finance') show_404();
+        $signature_pos = $this->input->post('signaturePos');
         $direksi_id = $this->input->post('direksi');
         if (!empty($_FILES) && isset($_FILES['fileToUpload']) && $direksi_id !== NULL) {
             $allowedExts = array(
@@ -23,7 +26,6 @@ class Action extends MY_Controller {
                     $file_ext = end(explode(".", $_FILES["fileToUpload"]["name"]));
                     $file_loc = './assets/uploads/files/';
                     $file_loc = $file_loc . $file_id . '.' . $file_ext;
-                    $file_loc2 = '/assets/uploads/files/' . $file_id . '.' . $file_ext;
                     if (in_array($file_ext, $allowedExts)){
                         if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file_loc)) {
                             $msg = "The file " . $file_name . " has been uploaded successfully";
@@ -41,8 +43,9 @@ class Action extends MY_Controller {
                                 'finance_id' => $user->finance_id,
                                 'direksi_id' => $direksi_id,
                                 'signature_id' => NULL,
+                                'signature_pos' => $signature_pos,
                                 'name' => substr($file_name, 0, strrpos($file_name, '.')),
-                                'location' => $file_loc2,
+                                'location' => $file_loc,
                                 'thumbnail' => $thumbnail_loc,
                                 'upload_date' => strtotime("now"),
                                 'due_date' => strtotime("+1 week"),
@@ -77,6 +80,20 @@ class Action extends MY_Controller {
         }
     }
 
+    public function approve(){
+        if($this->session->userdata('role') != 'direksi') show_404();
+        $docId = $this->input->get('docid');
+        $dokumen = $this->DatabaseModel->getData('dokumen',$docId);
+        if($dokumen->num_rows() < 1) show_404();
+        foreach($dokumen->result() as $dok){
+            if($dok->dokumen_id === $docId){
+                $dokumen = $dok;
+                break;
+            }
+        }
+        $this->addSignature('.' . $dokumen->location, './assets/signature.png');
+    }
+
     public function generateThumbnail($file_loc, $file_id){
         // generate thumbnail
         // pastikan sudah menjalankan command "composer require convertapi/convertapi-php"
@@ -93,7 +110,7 @@ class Action extends MY_Controller {
         return $thumbnail_loc;
     }
 
-    public function addSignature(){
+    public function addSignature($file_loc, $sign_loc){
         // Create a new task
         $project_id = 'project_public_28ee5d7c5e37cbc2f53fdbed954d36c9_FvWHLc3bf23eedb62e726f8987fa0f4840764';
         $project_key = 'secret_key_bc34ba5b399de41180ad0d5d9403baa2_I9L5j2d8789a22e0395179ecb8373b6ac6b10';
@@ -102,7 +119,7 @@ class Action extends MY_Controller {
         // Add files to task for upload
         $file1 = $myTaskWatermark->addFile($file_loc);
         // Add Image to task
-        $image = $myTaskWatermark->addFile('./assets/signature.png');
+        $image = $myTaskWatermark->addFile($sign_loc);
         // set mode to image
         $myTaskWatermark->setMode("image");
         // Select watermark parameters

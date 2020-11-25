@@ -10,6 +10,7 @@ class Page extends MY_Controller {
         else $data['curr_filter'] = 'all';
         $data['curr_page'] = "dashboard";
         $data['direksi'] = $this->DatabaseModel->getDatas('direksi');
+        $data['finance'] = $this->DatabaseModel->getDatas('finance');
         $data['dokumen'] = $this->DatabaseModel->getDatas('dokumen');
         // function render_backend tersebut dari file core/MY_Controller.php
         $this->render_backend('dashboard', $data); // load view dashboard.php

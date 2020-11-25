@@ -105,18 +105,17 @@ setTimeout(function(){
 }, 10000)
 </script>
 <?php
-
-// Cek role user
-if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
-    if($this->session->flashdata('data')){ // Jika ada
-        $div_success = '<div id="alert" class="alert alert-success">';
-        $div_danger = '<div id="alert" class="alert alert-danger">';
-        $content = $this->session->flashdata('data')['msg'].'</div>';
-        if($this->session->flashdata('data')['status']) echo $div_success.$content;
-        else echo $div_danger.$content;
-    }
+if($this->session->flashdata('data')){ // Jika ada
+    $div_success = '<div id="alert" class="alert alert-success">';
+    $div_danger = '<div id="alert" class="alert alert-danger">';
+    $content = $this->session->flashdata('data')['msg'].'</div>';
+    if($this->session->flashdata('data')['status']) echo $div_success.$content;
+    else echo $div_danger.$content;
+}
 ?>
-    
+<?php
+if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
+?>    
     <div class="container align-center mb-5">
       <div class="row bg-light p-5" style="border-radius: 25px; width: 75%;">
           <div class="col-md-12">
@@ -126,6 +125,13 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                     Upload document and share your documents with others
                     <div class="mt-5">
                         <form action="<?php echo base_url('index.php/action/file_upload'); ?>" method="post" enctype="multipart/form-data">
+                            <select name="signaturePos" class="custom-select mb-3" required>
+                                <option selected disabled>Posisi TTD</option>
+                                <option value="top-left">Top - Left</option>
+                                <option value="top-right">Top - Right</option>
+                                <option value="bottom-left">Bottom - Left</option>
+                                <option value="bottom-right">Bottom - Right</option>
+                            </select>
                             <select name="direksi" class="custom-select mb-3" required>
                                 <option selected disabled>Direksi - Divisi</option>
                                 <!-- Loop Direksi -->
@@ -153,8 +159,8 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
           </div>
       </div>
     </div>
-    <hr/>
-    <div class="container p-5 bg-light mt-5" style="border-radius: 25px;">
+    <hr class="mb-5"/>
+    <div class="container-fluid p-5 bg-light" style="border-radius: 25px;">
       <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
       <div class="row pt-5 mx-5">
         <?php
@@ -192,12 +198,24 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                 </div>
                             </div>
                             <div class="container-right">
-                                <a class="mr-5 align-center text-primary" title="Open" href="'.base_url($dok->location).'">
+                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
+                                <a class="mx-2 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
                                     <i class="fad fa-glasses-alt fa-4x"></i>
                                 </a>
-                                <div class="align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>
+                                <a class="mx-2 align-center text-danger" title="Action: Delete" href="'.base_url($dok->location).'">
+                                    <i class="fad fa-trash-alt fa-4x"></i>
+                                </a>
                             </div>
                         </div>';
+                    }else{
+                        echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                                <div class='text-primary'>
+                                    <i class='fad fa-folder-open fa-10x'></i>
+                                </div>
+                                <div>
+                                    <h4>There's nothing on the desk</h4>
+                                </div>
+                            </div>";
                     }
                     
                 }
@@ -205,11 +223,75 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
         ?>
       </div>
     </div>
-
-    <?php
+<?php
 }else if($this->session->userdata('role') == 'direksi'){ // Jika role-nya direksi
-    ?>
-    <h3 class="text-center py-5"> -- Direksi Panel --</h3>
+?>
+    <div class="container-fluid p-5 bg-light" style="border-radius: 25px;">
+      <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
+      <div class="row pt-5 mx-5">
+        <?php
+            if($dokumen->num_rows() === 0){
+                echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                        <div class='text-primary'>
+                            <i class='fad fa-folder-open fa-10x'></i>
+                        </div>
+                        <div>
+                            <h4>There's nothing on the desk</h4>
+                        </div>
+                    </div>";
+            }else{
+                foreach ($dokumen->result() as $dok){
+                    if($dok->status === $curr_filter || $curr_filter === 'all'){
+                        $temp = getFinanceById($finance,$dok->finance_id);
+                        echo '<div class="col-lg-12 p-4 mb-3 list-container">
+                            <div class="container-left">
+                                <div class="preview-container">
+                                    <img class="preview-img" src="'.base_url($dok->thumbnail).'" alt="asd">
+                                </div>
+                                <div class="detail-container">
+                                    <div class="detail-title">
+                                        <div>Nama Dokumen </div>
+                                        <div>Finance</div>
+                                        <div>Upload Date </div>
+                                        <div>Due Date </div>
+                                    </div>
+                                    <div class="detail-content">
+                                        <div>: '.$dok->name.'</div>
+                                        <div>: '.ucwords($temp->first_name.' '.$temp->last_name).'</div>
+                                        <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
+                                        <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="container-right">
+                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
+                                <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url('.' . $dok->location).'">
+                                    <i class="fad fa-glasses-alt fa-4x"></i>
+                                </a>
+                                '.($dok->status === "pending"?'<a class="mx-2 align-center text-success" title="Action: Approve" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
+                                                                    <i class="fad fa-check-circle fa-4x"></i>
+                                                                </a>
+                                                                <a class="mx-2 align-center text-danger" title="Action: Reject" href="'.base_url($dok->location).'">
+                                                                    <i class="fad fa-times-circle fa-4x"></i>
+                                                                </a>':'').'
+                            </div>
+                        </div>';
+                    }else{
+                        echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                                <div class='text-primary'>
+                                    <i class='fad fa-folder-open fa-10x'></i>
+                                </div>
+                                <div>
+                                    <h4>There's nothing on the desk</h4>
+                                </div>
+                            </div>";
+                    }
+                    
+                }
+            }
+        ?>
+      </div>
+    </div>
 <?php
 }
 ?>
@@ -222,17 +304,24 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
             }
         }
     }
+    function getFinanceById($finance, $finance_id){
+        foreach($finance->result() as $fin){
+            if($fin->finance_id === $finance_id){
+                return $fin;
+            }
+        }
+    }
     function getElementStatus($status){
         if($status === 'approved'){
-            return '<a class="align-center text-center text-success" title="Approved" href="'.base_url('index.php/page/dashboard?filter=approved').'">
+            return '<a class="align-center text-center text-success" title="Status: Approved" href="'.base_url('index.php/page/dashboard?filter=approved').'">
                         <i class="fad fa-file-check fa-4x"></i>
                     </a>';
         }elseif($status === 'rejected'){
-            return '<a class="align-center text-center text-danger" title="Rejected" href="'.base_url('index.php/page/dashboard?filter=rejected').'">
+            return '<a class="align-center text-center text-danger" title="Status: Rejected" href="'.base_url('index.php/page/dashboard?filter=rejected').'">
                         <i class="fad fa-file-times fa-4x"></i>
                     </a>';
         }elseif($status === 'pending'){
-            return '<a class="align-center text-center text-warning" title="Pending" href="'.base_url('index.php/page/dashboard?filter=pending').'">
+            return '<a class="align-center text-center text-warning" title="Status: Pending" href="'.base_url('index.php/page/dashboard?filter=pending').'">
                         <i class="fad fa-clock fa-4x"></i>
                     </a>';
         }
