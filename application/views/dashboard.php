@@ -125,23 +125,32 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                     Upload document and share your documents with others
                     <div class="mt-5">
                         <form action="<?php echo base_url('index.php/action/file_upload'); ?>" method="post" enctype="multipart/form-data">
-                            <select name="signaturePos" class="custom-select mb-3" required>
-                                <option selected disabled>Posisi TTD</option>
-                                <option value="top-left">Top - Left</option>
-                                <option value="top-right">Top - Right</option>
-                                <option value="bottom-left">Bottom - Left</option>
-                                <option value="bottom-right">Bottom - Right</option>
-                            </select>
-                            <select name="direksi" class="custom-select mb-3" required>
-                                <option selected disabled>Direksi - Divisi</option>
-                                <!-- Loop Direksi -->
-                                <?php
-                                    foreach($direksi->result() as $dir){
-                                        echo '<option value="'.$dir->direksi_id.'">'.ucwords($dir->first_name.' '.$dir->last_name.' - '.$dir->divisi).'</option>';
-                                    } 
-                                ?>
-                            </select>
-                            <input type="file" name="fileToUpload" id="fileToUpload" class="inputfile" onChange="validateFile()" accept="application/pdf"/>
+                            <div class="form-group">
+                                <select name="direksi" class="form-control" required>
+                                    <option selected disabled>Direksi - Divisi</option>
+                                    <!-- Loop Direksi -->
+                                    <?php
+                                        foreach($direksi->result() as $dir){
+                                            echo '<option value="'.$dir->direksi_id.'">'.ucwords($dir->first_name.' '.$dir->last_name.' - '.$dir->divisi).'</option>';
+                                        } 
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <select name="signaturePos" class="form-control" required>
+                                    <option selected disabled>Posisi TTD</option>
+                                    <option value="top-left">Top - Left</option>
+                                    <option value="top-right">Top - Right</option>
+                                    <option value="bottom-left">Bottom - Left</option>
+                                    <option value="bottom-right">Bottom - Right</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="signaturePage" placeholder="Halaman TTD: e.g 1-4,7" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="file" name="fileToUpload" id="fileToUpload" class="inputfile" onChange="validateFile()" accept="application/pdf"/>
+                            </div>
                             <div>
                                 <div class="row">
                                     <div class="col-sm-10 p-0 m-0"><button class="btn btn-danger btn-block btn-upload-submit" type="submit" disabled>Upload Document</button></div>
@@ -160,159 +169,128 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
       </div>
     </div>
     <hr class="mb-5"/>
-    <div class="container-fluid p-5 bg-light" style="border-radius: 25px;">
-      <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
-      <div class="row pt-5 mx-5">
-        <?php
-            if($dokumen->num_rows() === 0){
-                echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                        <div class='text-primary'>
-                            <i class='fad fa-folder-open fa-10x'></i>
-                        </div>
-                        <div>
-                            <h4>There's nothing on the desk</h4>
-                        </div>
-                    </div>";
-            }else{
-                // Filtering dokumen
-                $GLOBALS['curr_filter'] = $curr_filter;
-                $filteredDokumen = array_filter($dokumen->result(), function($obj){
-                    if (isset($obj->status) && $GLOBALS['curr_filter'] ===  'all') {
-                        return true;
-                    }else if(isset($obj->status) &&  $obj->status ===  $GLOBALS['curr_filter']){
-                        return true;
-                    }
-                    return false;
-                });
-                if(count($filteredDokumen) < 1){
-                    echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                        <div class='text-primary'>
-                            <i class='fad fa-folder-open fa-10x'></i>
-                        </div>
-                        <div>
-                            <h4>There's nothing on the desk</h4>
-                        </div>
-                    </div>";
-                }else{
-                    foreach ($filteredDokumen as $dok){
-                        $temp = getDireksiById($direksi,$dok->direksi_id);
-                        echo '<div class="col-lg-12 p-4 mb-3 list-container">
-                            <div class="container-left">
-                                <div class="preview-container">
-                                    <img class="preview-img" src="'.base_url($dok->thumbnail).'" alt="asd">
-                                </div>
-                                <div class="detail-container">
-                                    <div class="detail-title">
-                                        <div>Nama Dokumen </div>
-                                        <div>Direksi - Divisi</div>
-                                        <div>Upload Date </div>
-                                        <div>Due Date </div>
-                                    </div>
-                                    <div class="detail-content">
-                                        <div>: '.$dok->name.'</div>
-                                        <div>: '.ucwords($temp->first_name.' '.$temp->last_name.' - '.$temp->divisi).'</div>
-                                        <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
-                                        <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="container-right">
-                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
-                                <a class="mx-2 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
-                                    <i class="fad fa-glasses-alt fa-4x"></i>
-                                </a>
-                                <a class="mx-2 align-center text-danger" title="Action: Delete" href="'.base_url($dok->location).'">
-                                    <i class="fad fa-trash-alt fa-4x"></i>
-                                </a>
-                            </div>
-                        </div>';
-                    }
-                }
-            }
-        ?>
-      </div>
-    </div>
-<?php
-}else if($this->session->userdata('role') == 'direksi'){ // Jika role-nya direksi
-?>
-    <div class="container-fluid p-5 bg-light" style="border-radius: 25px;">
-      <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
-      <div class="row pt-5 mx-5">
-        <?php
-            if($dokumen->num_rows() === 0){
-                echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                        <div class='text-primary'>
-                            <i class='fad fa-folder-open fa-10x'></i>
-                        </div>
-                        <div>
-                            <h4>There's nothing on the desk</h4>
-                        </div>
-                    </div>";
-            }else{
-                // Filtering dokumen
-                $GLOBALS['curr_filter'] = $curr_filter;
-                $filteredDokumen = array_filter($dokumen->result(), function($obj){
-                    if (isset($obj->status) && $GLOBALS['curr_filter'] ===  'all') {
-                        return true;
-                    }else if(isset($obj->status) &&  $obj->status ===  $GLOBALS['curr_filter']){
-                        return true;
-                    }
-                    return false;
-                });
-                if(count($filteredDokumen) < 1){
-                    echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                        <div class='text-primary'>
-                            <i class='fad fa-folder-open fa-10x'></i>
-                        </div>
-                        <div>
-                            <h4>There's nothing on the desk</h4>
-                        </div>
-                    </div>";
-                }else{
-                    foreach ($filteredDokumen as $dok){
-                        $temp = getFinanceById($finance,$dok->finance_id);
-                        echo '<div class="col-lg-12 p-4 mb-3 list-container">
-                            <div class="container-left">
-                                <div class="preview-container">
-                                    <img class="preview-img" src="'.base_url($dok->thumbnail).'" alt="asd">
-                                </div>
-                                <div class="detail-container">
-                                    <div class="detail-title">
-                                        <div>Nama Dokumen </div>
-                                        <div>Finance</div>
-                                        <div>Upload Date </div>
-                                        <div>Due Date </div>
-                                    </div>
-                                    <div class="detail-content">
-                                        <div>: '.$dok->name.'</div>
-                                        <div>: '.ucwords($temp->first_name.' '.$temp->last_name).'</div>
-                                        <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
-                                        <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
-                                    </div>
-                                </div>
-                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
-                            </div>
-                            <div class="container-right">
-                                '.($dok->status === "pending"?'<a class="mx-2 align-center text-success" title="Action: Approve" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
-                                                                    <i class="fad fa-check-circle fa-4x"></i>
-                                                                </a>
-                                                                <a class="mx-2 align-center text-danger" title="Action: Reject" href="'.base_url("index.php/action/reject?docid=$dok->dokumen_id").'">
-                                                                    <i class="fad fa-times-circle fa-4x"></i>
-                                                                </a>':'').'
-                                <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
-                                    <i class="fad fa-glasses-alt fa-4x"></i>
-                                </a>
-                            </div>
-                        </div>';
-                    }
-                }
-            }
-        ?>
-      </div>
-    </div>
 <?php
 }
 ?>
+    <div class="container-fluid p-5 bg-light" style="border-radius: 25px;">
+        <h4 class="mx-5"><?php echo ucwords($curr_filter); ?> Documents: </h4>
+        <div class="row pt-5 mx-5">
+            <?php
+                if($dokumen->num_rows() === 0){
+                    echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                            <div class='text-primary'>
+                                <i class='fad fa-folder-open fa-10x'></i>
+                            </div>
+                            <div>
+                                <h4>There's nothing on the desk</h4>
+                            </div>
+                        </div>";
+                }else{
+                    // Filtering dokumen
+                    $GLOBALS['curr_filter'] = $curr_filter;
+                    $filteredDokumen = array_filter($dokumen->result(), function($obj){
+                        if($this->session->userdata('role') == 'direksi'){
+                            if (isset($obj->status) && $obj->direksi_id === $this->session->userdata('user')->direksi_id && $GLOBALS['curr_filter'] ===  'all') {
+                                return true;
+                            }else if(isset($obj->status) && $obj->direksi_id === $this->session->userdata('user')->direksi_id &&  $obj->status ===  $GLOBALS['curr_filter']){
+                                return true;
+                            }
+                            return false;
+                        }else{
+                            if (isset($obj->status) && $GLOBALS['curr_filter'] ===  'all') {
+                                return true;
+                            }else if(isset($obj->status) && $obj->status ===  $GLOBALS['curr_filter']){
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+                    if(count($filteredDokumen) < 1){
+                        echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                            <div class='text-primary'>
+                                <i class='fad fa-folder-open fa-10x'></i>
+                            </div>
+                            <div>
+                                <h4>There's nothing on the desk</h4>
+                            </div>
+                        </div>";
+                    }else{
+                        foreach ($filteredDokumen as $dok){
+                            if($this->session->userdata('role') == 'finance'){
+                                $temp = getDireksiById($direksi,$dok->direksi_id);
+                                echo '<div class="col-lg-12 p-4 mb-3 list-container">
+                                    <div class="container-left">
+                                        <div class="preview-container">
+                                            <img class="preview-img" src="'.base_url($dok->thumbnail).'" alt="asd">
+                                        </div>
+                                        <div class="detail-container">
+                                            <div class="detail-title">
+                                                <div>Nama Dokumen </div>
+                                                <div>Direksi - Divisi</div>
+                                                <div>Upload Date </div>
+                                                <div>Due Date </div>
+                                            </div>
+                                            <div class="detail-content">
+                                                <div>: '.$dok->name.'</div>
+                                                <div>: '.ucwords($temp->first_name.' '.$temp->last_name.' - '.$temp->divisi).'</div>
+                                                <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
+                                                <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
+                                            </div>
+                                        </div>
+                                        '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
+                                    </div>
+                                    <div class="container-right">
+                                        <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
+                                            <i class="fad fa-glasses-alt fa-4x"></i>
+                                        </a>
+                                        <a class="mx-3 align-center text-danger" title="Action: Delete" href="'.base_url($dok->location).'">
+                                            <i class="fad fa-trash-alt fa-4x"></i>
+                                        </a>
+                                    </div>
+                                </div>';
+                            }elseif($this->session->userdata('role') == 'direksi'){
+                                $temp = getFinanceById($finance,$dok->finance_id);
+                                echo '<div class="col-lg-12 p-4 mb-3 list-container">
+                                    <div class="container-left">
+                                        <div class="preview-container">
+                                            <img class="preview-img" src="'.base_url($dok->thumbnail).'" alt="asd">
+                                        </div>
+                                        <div class="detail-container">
+                                            <div class="detail-title">
+                                                <div>Nama Dokumen </div>
+                                                <div>Finance</div>
+                                                <div>Upload Date </div>
+                                                <div>Due Date </div>
+                                            </div>
+                                            <div class="detail-content">
+                                                <div>: '.$dok->name.'</div>
+                                                <div>: '.ucwords($temp->first_name.' '.$temp->last_name).'</div>
+                                                <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
+                                                <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
+                                            </div>
+                                        </div>
+                                        '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
+                                    </div>
+                                    <div class="container-right">
+                                        '.($dok->status === "pending"?'<a class="mx-3 align-center text-success" title="Action: Approve" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
+                                                                            <i class="fad fa-check-circle fa-4x"></i>
+                                                                        </a>
+                                                                        <a class="mx-3 align-center text-danger" title="Action: Reject" href="'.base_url("index.php/action/reject?docid=$dok->dokumen_id").'">
+                                                                            <i class="fad fa-times-circle fa-4x"></i>
+                                                                        </a>':'').'
+                                        <a class="mx-4 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
+                                            <i class="fad fa-glasses-alt fa-4x"></i>
+                                        </a>
+                                    </div>
+                                </div>';
+                                
+                            }
+                        }
+                    }
+                }
+            ?>
+        </div>
+    </div>
 <?php
     //Function
     function getDireksiById($direksi, $direksi_id){

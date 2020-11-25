@@ -4,6 +4,7 @@ class Auth extends MY_Controller {
     public function __construct(){
         parent:: __construct();
         $this->load->model('UserModel');
+        $this->load->model('DatabaseModel');
     }
     public function index(){
         if($this->session->userdata('authenticated')) // Jika user sudah login (Session authenticated ditemukan)
@@ -11,6 +12,11 @@ class Auth extends MY_Controller {
             
         $data['curr_page'] = "login";
         $this->render_backend('login', $data); // Load view login.php
+    }
+    public function registrasi_ttd(){
+        $data['curr_page'] = "registrasi_ttd";
+        // function render_backend tersebut dari file core/MY_Controller.php
+        $this->render_backend('registrasi_ttd', $data); // load view registrasi_ttd.php
     }
     public function login(){
 
@@ -29,18 +35,27 @@ class Auth extends MY_Controller {
                 $this->session->set_flashdata('message', 'Password salah'); // Buat session flashdata
                 redirect('auth'); // Redirect ke halaman login
             }else{ // Jika password yang diinput sama dengan password yang didatabase
+                $signFlag = false;
+                if($data['role'] === 'direksi'){
+                    $signature = $this->DatabaseModel->getDatas('signature');
+                    foreach($signature->result() as $sign){
+                        if($sign->direksi_id === $data['user']->direksi_id){
+                            $signFlag = true;
+                        }
+                    }
+                }else{
+                    $signFlag = true;
+                }
                 $session = array(
                     'authenticated' => true,                        // Buat session authenticated dengan value true
-                    'email'         => $data['user']->email,        // Buat session email
-                    'first_name'    => $data['user']->first_name,   // Buat session fname
-                    'last_name'     => $data['user']->last_name,    // Buat session lname
+                    'user'         => $data['user'],               // Buat session user
                     'role'          => $data['role']                // Buat session role
                 );
-                if($data['role'] == 'guru') $session['nomor_induk'] = $data['user']->nip;
-                else if($data['role'] == 'siswa') $session['nomor_induk'] = $data['user']->nisn;
-
                 $this->session->set_userdata($session); // Buat session sesuai $session
-                redirect('page/dashboard'); // Redirect ke halaman dashboard
+                // Jika belum registrasi ttd
+                if(!$signFlag) redirect('auth/registrasi_ttd');
+                else redirect('page/dashboard'); // Redirect ke halaman dashboard
+                
             }
         }
     }

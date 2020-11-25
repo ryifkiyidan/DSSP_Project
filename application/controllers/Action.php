@@ -10,10 +10,63 @@ class Action extends MY_Controller {
         $this->load->model('UserModel');
     }
 
+    public function registrasi_ttd(){
+        if (!empty($_FILES) && isset($_FILES['fileToUpload'])) {
+            $allowedExts = array(
+                "png"
+            );
+            $uploadOk = false;
+            switch ($_FILES['fileToUpload']["error"]) {
+                case UPLOAD_ERR_OK:
+                    $file_id = md5($this->session->userdata('user')->direksi_id);
+                    $file_name = basename($_FILES['fileToUpload']['name']);
+                    $file_ext = end(explode(".", $_FILES["fileToUpload"]["name"]));
+                    $file_loc = './assets/uploads/signatures/';
+                    $file_loc = $file_loc . $file_id . '.' . $file_ext;
+                    $file_loc2 = '/assets/uploads/signatures/' . $file_id . '.' . $file_ext;
+                    if (in_array($file_ext, $allowedExts)){
+                        if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file_loc)) {
+                            $msg = "Signature has been registered successfully";
+                            $uploadOk = true;
+                            
+                            // insert to database
+                            // Data
+                            date_default_timezone_set("Asia/Jakarta");
+                            $user = $this->UserModel->getUser($this->session->userdata('email'), 'finance');
+                            $data = array(
+                                'signature_id' => $file_id,
+                                'direksi_id' => $this->session->userdata('user')->direksi_id,
+                                'location' => $file_loc2,
+                            );
+
+                            // Table
+                            $table = 'signature';
+
+                            $this->DatabaseModel->insertData($table, $data);
+                            
+                        }
+                        else {
+                            $msg = "Sorry, there was a problem uploading your file.";
+                        }
+                    }
+                    else{
+                        $msg = "File type must PNG";
+                    }
+                    break;
+            }
+            $data['msg'] = $msg;
+            $data['status'] = $uploadOk;
+            $this->session->set_flashdata('data', $data);
+            if($uploadOk) redirect('page/dashboard');
+            else redirect('auth/registrasi_ttd');
+        }
+    }
+
     public function file_upload(){
         if($this->session->userdata('role') != 'finance') show_404();
-        $signature_pos = $this->input->post('signaturePos');
         $direksi_id = $this->input->post('direksi');
+        $signature_pos = $this->input->post('signaturePos');
+        $signature_page = $this->input->post('signaturePage');
         if (!empty($_FILES) && isset($_FILES['fileToUpload']) && $direksi_id !== NULL) {
             $allowedExts = array(
                 "pdf"
@@ -38,13 +91,13 @@ class Action extends MY_Controller {
                             // insert to database
                             // Data
                             date_default_timezone_set("Asia/Jakarta");
-                            $user = $this->UserModel->getUser($this->session->userdata('email'), 'finance');
                             $data = array(
                                 'dokumen_id' => $file_id,
-                                'finance_id' => $user->finance_id,
+                                'finance_id' => $this->session->userdata('user')->finance_id,
                                 'direksi_id' => $direksi_id,
                                 'signature_id' => NULL,
                                 'signature_pos' => $signature_pos,
+                                'signature_page' => $signature_page,
                                 'name' => substr($file_name, 0, strrpos($file_name, '.')),
                                 'location' => $file_loc2,
                                 'thumbnail' => $thumbnail_loc,
@@ -92,9 +145,10 @@ class Action extends MY_Controller {
                 break;
             }
         }
-        $this->addSignature('.' . $dokumen->location, './assets/signature.png');
+        $signature_id = $this->addSignature($dokumen);
         //Data
         $data = array(
+            'signature_id' => $signature_id,
             'status' => 'approved'
         );
 
@@ -106,6 +160,10 @@ class Action extends MY_Controller {
         //Table
         $table = 'dokumen';
         $this->DatabaseModel->updateData($where, $table, $data);
+        $data['msg'] = 'Document Approved';
+        $data['status'] = true;
+        $this->session->set_flashdata('data', $data);
+        redirect('page/dashboard'); // Redirect ke halaman dashboard
     }
 
     public function reject(){
@@ -126,6 +184,11 @@ class Action extends MY_Controller {
         //Table
         $table = 'dokumen';
         $this->DatabaseModel->updateData($where, $table, $data);
+
+        $data['msg'] = 'Document Rejected';
+        $data['status'] = false;
+        $this->session->set_flashdata('data', $data);
+        redirect('page/dashboard'); // Redirect ke halaman dashboard
     }
 
     public function generateThumbnail($file_loc, $file_id){
@@ -144,24 +207,57 @@ class Action extends MY_Controller {
         return $thumbnail_loc;
     }
 
-    public function addSignature($file_loc, $sign_loc){
+    public function addSignature($dokumen){
+        $signature = $this->DatabaseModel->getData('signature', md5($this->session->userdata('user')->direksi_id));
+        if($signature->num_rows() < 1) show_404();
+        foreach($signature->result() as $sign){
+            if($sign->signature_id === md5($this->session->userdata('user')->direksi_id)){
+                $signature = $sign;
+                break;
+            }
+        }
         // Create a new task
         $project_id = 'project_public_28ee5d7c5e37cbc2f53fdbed954d36c9_FvWHLc3bf23eedb62e726f8987fa0f4840764';
         $project_key = 'secret_key_bc34ba5b399de41180ad0d5d9403baa2_I9L5j2d8789a22e0395179ecb8373b6ac6b10';
         $ilovepdf = new Ilovepdf($project_id,$project_key);
         $myTaskWatermark = $ilovepdf->newTask('watermark');
         // Add files to task for upload
-        $file1 = $myTaskWatermark->addFile($file_loc);
+        $file1 = $myTaskWatermark->addFile('.' . $dokumen->location);
         // Add Image to task
-        $image = $myTaskWatermark->addFile($sign_loc);
+        $image = $myTaskWatermark->addFile('.' . $signature->location);
         // set mode to image
         $myTaskWatermark->setMode("image");
-        // Select watermark parameters
+        // set watermark image
         $myTaskWatermark->setImage($image->server_filename);
+        // set watermark page
+        $myTaskWatermark->setPages($dokumen->signature_page);
+        switch ($dokumen->signature_pos) {
+            case 'top-left':
+                $myTaskWatermark->setVerticalPosition("top");
+                $myTaskWatermark->setHorizontalPosition("left");
+                break;
+            case 'top-right':
+                $myTaskWatermark->setVerticalPosition("top");
+                $myTaskWatermark->setHorizontalPosition("right");
+                break;
+            case 'bottom-left':
+                $myTaskWatermark->setVerticalPosition("bottom");
+                $myTaskWatermark->setHorizontalPosition("left");
+                break;
+            case 'bottom-right':
+                $myTaskWatermark->setVerticalPosition("bottom");
+                $myTaskWatermark->setHorizontalPosition("right");
+                break;
+            default:
+                $myTaskWatermark->setVerticalPosition("bottom");
+                $myTaskWatermark->setHorizontalPosition("right");
+                break;
+        }
         // Execute the task
         $myTaskWatermark->execute();
         // Download the package files
         $myTaskWatermark->download('./assets/uploads/files/');
+        return $signature->signature_id;
     }
 }
 ?>

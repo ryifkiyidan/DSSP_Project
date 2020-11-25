@@ -52,7 +52,7 @@
   <div class="text-center mb-5">
     <i class="fad fa-user-circle fa-6x mb-3 text-primary"></i>
     <br>
-    <h6><?php echo ucwords($this->session->userdata('first_name').' '.$this->session->userdata('last_name')); ?></h6>
+    <h6><?php echo ucwords($this->session->userdata('user')->first_name.' '.$this->session->userdata('user')->last_name); ?></h6>
     <?php echo ucwords($this->session->userdata('role')); ?>
   </div>
 

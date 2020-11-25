@@ -37,9 +37,9 @@
     * Variabel $headernya diambil dari core MY_Controller
     * (application/core/MY_Controller.php)
     * */
-        if($curr_page !== "login") echo $headernya;
+        if($curr_page !== "login" && $curr_page !== "registrasi_ttd") echo $headernya;
     ?>
-    <?php if($curr_page !== "login"){ ?>
+    <?php if($curr_page !== "login" && $curr_page !== "registrasi_ttd"){ ?>
     <div class="row">
         <div class="col-md-3 col-lg-2 d-none d-md-block bg-light position-fixed p-0" style="height: 100%;">
             <?php echo $sidebarnya; ?>
