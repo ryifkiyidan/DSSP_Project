@@ -174,8 +174,27 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                         </div>
                     </div>";
             }else{
-                foreach ($dokumen->result() as $dok){
-                    if($dok->status === $curr_filter || $curr_filter === 'all'){
+                // Filtering dokumen
+                $GLOBALS['curr_filter'] = $curr_filter;
+                $filteredDokumen = array_filter($dokumen->result(), function($obj){
+                    if (isset($obj->status) && $GLOBALS['curr_filter'] ===  'all') {
+                        return true;
+                    }else if(isset($obj->status) &&  $obj->status ===  $GLOBALS['curr_filter']){
+                        return true;
+                    }
+                    return false;
+                });
+                if(count($filteredDokumen) < 1){
+                    echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                        <div class='text-primary'>
+                            <i class='fad fa-folder-open fa-10x'></i>
+                        </div>
+                        <div>
+                            <h4>There's nothing on the desk</h4>
+                        </div>
+                    </div>";
+                }else{
+                    foreach ($filteredDokumen as $dok){
                         $temp = getDireksiById($direksi,$dok->direksi_id);
                         echo '<div class="col-lg-12 p-4 mb-3 list-container">
                             <div class="container-left">
@@ -207,17 +226,7 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                 </a>
                             </div>
                         </div>';
-                    }else{
-                        echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                                <div class='text-primary'>
-                                    <i class='fad fa-folder-open fa-10x'></i>
-                                </div>
-                                <div>
-                                    <h4>There's nothing on the desk</h4>
-                                </div>
-                            </div>";
                     }
-                    
                 }
             }
         ?>
@@ -240,8 +249,27 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                         </div>
                     </div>";
             }else{
-                foreach ($dokumen->result() as $dok){
-                    if($dok->status === $curr_filter || $curr_filter === 'all'){
+                // Filtering dokumen
+                $GLOBALS['curr_filter'] = $curr_filter;
+                $filteredDokumen = array_filter($dokumen->result(), function($obj){
+                    if (isset($obj->status) && $GLOBALS['curr_filter'] ===  'all') {
+                        return true;
+                    }else if(isset($obj->status) &&  $obj->status ===  $GLOBALS['curr_filter']){
+                        return true;
+                    }
+                    return false;
+                });
+                if(count($filteredDokumen) < 1){
+                    echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
+                        <div class='text-primary'>
+                            <i class='fad fa-folder-open fa-10x'></i>
+                        </div>
+                        <div>
+                            <h4>There's nothing on the desk</h4>
+                        </div>
+                    </div>";
+                }else{
+                    foreach ($filteredDokumen as $dok){
                         $temp = getFinanceById($finance,$dok->finance_id);
                         echo '<div class="col-lg-12 p-4 mb-3 list-container">
                             <div class="container-left">
@@ -262,31 +290,21 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                         <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
                                     </div>
                                 </div>
+                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
                             </div>
                             <div class="container-right">
-                                '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
-                                <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url('.' . $dok->location).'">
-                                    <i class="fad fa-glasses-alt fa-4x"></i>
-                                </a>
                                 '.($dok->status === "pending"?'<a class="mx-2 align-center text-success" title="Action: Approve" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
                                                                     <i class="fad fa-check-circle fa-4x"></i>
                                                                 </a>
-                                                                <a class="mx-2 align-center text-danger" title="Action: Reject" href="'.base_url($dok->location).'">
+                                                                <a class="mx-2 align-center text-danger" title="Action: Reject" href="'.base_url("index.php/action/reject?docid=$dok->dokumen_id").'">
                                                                     <i class="fad fa-times-circle fa-4x"></i>
                                                                 </a>':'').'
+                                <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
+                                    <i class="fad fa-glasses-alt fa-4x"></i>
+                                </a>
                             </div>
                         </div>';
-                    }else{
-                        echo "<div class='align-center' style='display:flex; flex-direction: column; width: 100%; height: 300px;'>
-                                <div class='text-primary'>
-                                    <i class='fad fa-folder-open fa-10x'></i>
-                                </div>
-                                <div>
-                                    <h4>There's nothing on the desk</h4>
-                                </div>
-                            </div>";
                     }
-                    
                 }
             }
         ?>

@@ -26,6 +26,7 @@ class Action extends MY_Controller {
                     $file_ext = end(explode(".", $_FILES["fileToUpload"]["name"]));
                     $file_loc = './assets/uploads/files/';
                     $file_loc = $file_loc . $file_id . '.' . $file_ext;
+                    $file_loc2 = '/assets/uploads/files/' . $file_id . '.' . $file_ext;
                     if (in_array($file_ext, $allowedExts)){
                         if (move_uploaded_file($_FILES['fileToUpload']['tmp_name'], $file_loc)) {
                             $msg = "The file " . $file_name . " has been uploaded successfully";
@@ -45,7 +46,7 @@ class Action extends MY_Controller {
                                 'signature_id' => NULL,
                                 'signature_pos' => $signature_pos,
                                 'name' => substr($file_name, 0, strrpos($file_name, '.')),
-                                'location' => $file_loc,
+                                'location' => $file_loc2,
                                 'thumbnail' => $thumbnail_loc,
                                 'upload_date' => strtotime("now"),
                                 'due_date' => strtotime("+1 week"),
@@ -92,6 +93,39 @@ class Action extends MY_Controller {
             }
         }
         $this->addSignature('.' . $dokumen->location, './assets/signature.png');
+        //Data
+        $data = array(
+            'status' => 'approved'
+        );
+
+        //Condition
+        $where = array(
+            'dokumen_id' => $docId
+        );
+
+        //Table
+        $table = 'dokumen';
+        $this->DatabaseModel->updateData($where, $table, $data);
+    }
+
+    public function reject(){
+        if($this->session->userdata('role') != 'direksi') show_404();
+        $docId = $this->input->get('docid');
+        $dokumen = $this->DatabaseModel->getData('dokumen',$docId);
+        if($dokumen->num_rows() < 1) show_404();
+        //Data
+        $data = array(
+            'status' => 'rejected'
+        );
+
+        //Condition
+        $where = array(
+            'dokumen_id' => $docId
+        );
+
+        //Table
+        $table = 'dokumen';
+        $this->DatabaseModel->updateData($where, $table, $data);
     }
 
     public function generateThumbnail($file_loc, $file_id){
@@ -127,7 +161,7 @@ class Action extends MY_Controller {
         // Execute the task
         $myTaskWatermark->execute();
         // Download the package files
-        $myTaskWatermark->download();
+        $myTaskWatermark->download('./assets/uploads/files/');
     }
 }
 ?>
