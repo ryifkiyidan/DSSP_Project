@@ -243,7 +243,7 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                         <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
                                             <i class="fad fa-glasses-alt fa-4x"></i>
                                         </a>
-                                        <a class="mx-3 align-center text-danger" title="Action: Delete" href="'.base_url("index.php/action/delete?docid=$dok->dokumen_id").'">
+                                        <a class="mx-3 align-center text-danger" title="Action: Delete" onClick="return confirm(\'Are you sure want to delete this document?\')" href="'.base_url("index.php/action/delete?docid=$dok->dokumen_id").'">
                                             <i class="fad fa-trash-alt fa-4x"></i>
                                         </a>
                                     </div>
@@ -272,10 +272,10 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                         '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
                                     </div>
                                     <div class="container-right">
-                                        '.($dok->status === "pending"?'<a class="mx-3 align-center text-success" title="Action: Approve" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
+                                        '.($dok->status === "pending"?'<a class="mx-3 align-center text-success" title="Action: Approve" onClick="return confirm(\'Are you sure want to approve this document?\')" href="'.base_url("index.php/action/approve?docid=$dok->dokumen_id").'">
                                                                             <i class="fad fa-check-circle fa-4x"></i>
                                                                         </a>
-                                                                        <a class="mx-3 align-center text-danger" title="Action: Reject" href="'.base_url("index.php/action/reject?docid=$dok->dokumen_id").'">
+                                                                        <a class="mx-3 align-center text-danger" title="Action: Reject" onClick="return confirm(\'Are you sure want to reject this document?\')" href="'.base_url("index.php/action/reject?docid=$dok->dokumen_id").'">
                                                                             <i class="fad fa-times-circle fa-4x"></i>
                                                                         </a>':'').'
                                         <a class="mx-4 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
