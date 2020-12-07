@@ -64,6 +64,7 @@ class Action extends MY_Controller {
 
     public function file_upload(){
         if($this->session->userdata('role') != 'finance') show_404();
+        $dokumen_id = '';
         $direksi_id = $this->input->post('direksi');
         $signature_pos = $this->input->post('signaturePos');
         $signature_page = $this->input->post('signaturePage');
@@ -75,6 +76,7 @@ class Action extends MY_Controller {
             switch ($_FILES['fileToUpload']["error"]) {
                 case UPLOAD_ERR_OK:
                     $file_id = md5('dok'.($this->DatabaseModel->getNumRows('dokumen')+1));
+                    $dokumen_id = $file_id;
                     $file_name = basename($_FILES['fileToUpload']['name']);
                     $file_ext = end(explode(".", $_FILES["fileToUpload"]["name"]));
                     $file_loc = './assets/uploads/files/';
@@ -123,6 +125,33 @@ class Action extends MY_Controller {
             }
             $data['msg'] = $msg;
             $data['status'] = $uploadOk;
+            // Send Notification Email
+            if($uploadOk){
+                $dokumen = $this->DatabaseModel->getData('dokumen', $dokumen_id)->row();
+                $direksi = $this->DatabaseModel->getData('direksi', $dokumen->direksi_id)->row();
+                $finance = $this->DatabaseModel->getData('finance', $dokumen->finance_id)->row();
+                if(isset($dokumen) && isset($direksi) && isset($finance)){
+                    if($direksi->gender === 'male') $gender = 'Bapak';
+                    else $gender = 'Ibu';
+
+                    $to = $direksi->email;
+                    $subject = 'Notification: Dokumen Pending by '.ucwords($finance->first_name.' '.$finance->last_name).' (Finance)';
+                    $message = '<p>Kepada '.$gender.' <strong>'.ucwords($direksi->first_name.' '.$direksi->last_name).'</strong></p>
+                    <p>Dengan email ini diberitahukan bahwa:</p>
+                    <p style="padding-left: 40px;">Nama Dokumen: <strong>'.$dokumen->name.'</strong><br />Status: <strong>'.ucwords($dokumen->status).'</strong><br />Upload Date: <strong>'.date('d M Y H:i:s', $dokumen->upload_date).'</strong><br />Due Date: <strong>'.date('d M Y H:i:s', $dokumen->due_date).'</strong><br /><br /></p>
+                    <p>Telah dikirim, mohon untuk segera diproses sebelum tanggal yang telah tercantum diatas.</p>';
+                    $attach = NULL;
+                    $email = array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'attach' => $attach,
+                    );
+                    $this->send_notificationEmail($email);
+                }else{
+                    echo "Notifikasi email gagal dikirim";
+                }
+            }
             $this->session->set_flashdata('data', $data);
             redirect('page/dashboard');
         }else{
@@ -132,6 +161,10 @@ class Action extends MY_Controller {
             $this->session->set_flashdata('data', $data);
             redirect('page/dashboard');
         }
+    }
+
+    public function delete(){
+
     }
 
     public function approve(){
@@ -258,6 +291,49 @@ class Action extends MY_Controller {
         // Download the package files
         $myTaskWatermark->download('./assets/uploads/files/');
         return $signature->signature_id;
+    }
+
+    public function send_notificationEmail($email){
+        // Konfigurasi email
+        $config = [
+            'mailtype'  => 'html',
+            'charset'   => 'utf-8',
+            'protocol'  => 'smtp',
+            'smtp_host' => 'smtp.gmail.com',
+            'smtp_user' => 'dssp.noreply@gmail.com',  // Email gmail
+            'smtp_pass'   => 'b4ndun699',  // Password gmail
+            'smtp_crypto' => 'ssl',
+            'smtp_port'   => 465,
+            'crlf'    => "\r\n",
+            'newline' => "\r\n"
+        ];
+
+        // Load library email dan konfigurasinya
+        $this->load->library('email', $config);
+
+        // Email dan nama pengirim
+        $this->email->from('dssp.noreply@gmail.com', 'DSSP');
+
+        // Email penerima
+        $this->email->to($email['to']); // Ganti dengan email tujuan
+
+        if($email['attach'] !== NULL){
+            // Lampiran email, isi dengan url/path file
+            $this->email->attach($email['attach']);
+        }
+
+        // Subject email
+        $this->email->subject($email['subject']);
+
+        // Isi email
+        $this->email->message($email['message']);
+
+        // Tampilkan pesan sukses atau error
+        if ($this->email->send()) {
+            echo 'Sukses! email berhasil dikirim.';
+        } else {
+            echo 'Error! email tidak dapat dikirim.';
+        }
     }
 }
 ?>
