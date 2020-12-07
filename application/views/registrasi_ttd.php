@@ -44,7 +44,7 @@ if($this->session->flashdata('message')){ // Jika ada
 
 <script>
   function show_alert() {
-    if(!confirm("Are you sure you want to register this signature? Once registered cannot be changed.")) {
+    if(!confirm("Are you sure you want to register this signature? Once registered it cannot be changed.")) {
       return false;
     }
     this.form.submit();
