@@ -233,8 +233,8 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                             <div class="detail-content">
                                                 <div>: '.$dok->name.'</div>
                                                 <div>: '.ucwords($temp->first_name.' '.$temp->last_name.' - '.$temp->divisi).'</div>
-                                                <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
-                                                <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
+                                                <div>: '.date('d M Y', $dok->upload_date).'</div>
+                                                <div>: '.date('d M Y', $dok->due_date).'</div>
                                             </div>
                                         </div>
                                         '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'
@@ -265,8 +265,8 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                             <div class="detail-content">
                                                 <div>: '.$dok->name.'</div>
                                                 <div>: '.ucwords($temp->first_name.' '.$temp->last_name).'</div>
-                                                <div>: '.date('d M Y H:i:s', $dok->upload_date).'</div>
-                                                <div>: '.date('d M Y H:i:s', $dok->due_date).'</div>
+                                                <div>: '.date('d M Y', $dok->upload_date).'</div>
+                                                <div>: '.date('d M Y', $dok->due_date).'</div>
                                             </div>
                                         </div>
                                         '.($curr_filter === "all"?'<div class="mr-5 align-center text-center" style="min-width: 70px;">'.getElementStatus($dok->status).'</div>':'').'

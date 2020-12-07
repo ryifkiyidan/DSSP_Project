@@ -138,7 +138,7 @@ class Action extends MY_Controller {
                     $subject = 'Notification: Dokumen Pending by '.ucwords($finance->first_name.' '.$finance->last_name).' (Finance)';
                     $message = '<p>Kepada '.$gender.' <strong>'.ucwords($direksi->first_name.' '.$direksi->last_name).'</strong></p>
                     <p>Dengan email ini diberitahukan bahwa:</p>
-                    <p style="padding-left: 40px;">Nama Dokumen: <strong>'.$dokumen->name.'</strong><br />Status: <strong>'.ucwords($dokumen->status).'</strong><br />Upload Date: <strong>'.date('d M Y H:i:s', $dokumen->upload_date).'</strong><br />Due Date: <strong>'.date('d M Y H:i:s', $dokumen->due_date).'</strong><br /><br /></p>
+                    <p style="padding-left: 40px;">Nama Dokumen: <strong>'.$dokumen->name.'</strong><br />Status: <strong>'.ucwords($dokumen->status).'</strong><br />Upload Date: <strong>'.date('d M Y', $dokumen->upload_date).'</strong><br />Due Date: <strong>'.date('d M Y', $dokumen->due_date).'</strong><br /><br /></p>
                     <p>Telah dikirim, mohon untuk segera diproses sebelum tanggal yang telah tercantum diatas.</p>';
                     $attach = NULL;
                     $email = array(
@@ -196,6 +196,35 @@ class Action extends MY_Controller {
         $data['msg'] = 'Document Approved';
         $data['status'] = true;
         $this->session->set_flashdata('data', $data);
+
+        // Send Notification Email
+        $dokumen = $this->DatabaseModel->getData('dokumen', $docId)->row();
+        $direksi = $this->DatabaseModel->getData('direksi', $dokumen->direksi_id)->row();
+        $finance = $this->DatabaseModel->getData('finance', $dokumen->finance_id)->row();
+        if(isset($dokumen) && isset($direksi) && isset($finance)){
+            if($finance->gender === 'male') $fGender = 'Bapak';
+            else $fGender = 'Ibu';
+
+            if($direksi->gender === 'male') $dGender = 'Bapak';
+            else $dGender = 'Ibu';
+
+            $to = $finance->email;
+            $subject = 'Notification: Dokumen Approved by '.ucwords($direksi->first_name.' '.$direksi->last_name).' (Direksi)';
+            $message = '<p>Kepada '.$fGender.' <strong>'.ucwords($finance->first_name.' '.$finance->last_name).'</strong></p>
+            <p>Dengan email ini diberitahukan bahwa:</p>
+            <p style="padding-left: 40px;">Nama Dokumen: <strong>'.$dokumen->name.'</strong><br />Status: <strong>'.ucwords($dokumen->status).'</strong><br />Upload Date: <strong>'.date('d M Y', $dokumen->upload_date).'</strong><br />Due Date: <strong>'.date('d M Y', $dokumen->due_date).'</strong><br /><br /></p>
+            <p>Telah disetujui oleh '.$dGender.' <strong>'.ucwords($direksi->first_name.' '.$direksi->last_name).'</strong>.</p>';
+            $attach = NULL;
+            $email = array(
+                'to' => $to,
+                'subject' => $subject,
+                'message' => $message,
+                'attach' => $attach,
+            );
+            $this->send_notificationEmail($email);
+        }else{
+            echo "Notifikasi email gagal dikirim";
+        }
         redirect('page/dashboard'); // Redirect ke halaman dashboard
     }
 
@@ -221,6 +250,35 @@ class Action extends MY_Controller {
         $data['msg'] = 'Document Rejected';
         $data['status'] = false;
         $this->session->set_flashdata('data', $data);
+        
+        // Send Notification Email
+        $dokumen = $this->DatabaseModel->getData('dokumen', $docId)->row();
+        $direksi = $this->DatabaseModel->getData('direksi', $dokumen->direksi_id)->row();
+        $finance = $this->DatabaseModel->getData('finance', $dokumen->finance_id)->row();
+        if(isset($dokumen) && isset($direksi) && isset($finance)){
+            if($finance->gender === 'male') $fGender = 'Bapak';
+            else $fGender = 'Ibu';
+
+            if($direksi->gender === 'male') $dGender = 'Bapak';
+            else $dGender = 'Ibu';
+
+            $to = $finance->email;
+            $subject = 'Notification: Dokumen Rejected by '.ucwords($direksi->first_name.' '.$direksi->last_name).' (Direksi)';
+            $message = '<p>Kepada '.$fGender.' <strong>'.ucwords($finance->first_name.' '.$finance->last_name).'</strong></p>
+            <p>Dengan email ini diberitahukan bahwa:</p>
+            <p style="padding-left: 40px;">Nama Dokumen: <strong>'.$dokumen->name.'</strong><br />Status: <strong>'.ucwords($dokumen->status).'</strong><br />Upload Date: <strong>'.date('d M Y', $dokumen->upload_date).'</strong><br />Due Date: <strong>'.date('d M Y', $dokumen->due_date).'</strong><br /><br /></p>
+            <p>Telah ditolak oleh '.$dGender.' <strong>'.ucwords($direksi->first_name.' '.$direksi->last_name).'</strong>.</p>';
+            $attach = NULL;
+            $email = array(
+                'to' => $to,
+                'subject' => $subject,
+                'message' => $message,
+                'attach' => $attach,
+            );
+            $this->send_notificationEmail($email);
+        }else{
+            echo "Notifikasi email gagal dikirim";
+        }
         redirect('page/dashboard'); // Redirect ke halaman dashboard
     }
 
