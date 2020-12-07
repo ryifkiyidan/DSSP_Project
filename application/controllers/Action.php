@@ -301,7 +301,7 @@ class Action extends MY_Controller {
         // generate thumbnail
         // pastikan sudah menjalankan command "composer require convertapi/convertapi-php"
         // tanpa tanda kutip
-        ConvertApi::setApiSecret('oZ5quO9fgxMI8b4s');
+        ConvertApi::setApiSecret('q8Z3WDWnn5hVgwwG');
         $result = ConvertApi::convert('thumbnail', [
                 'File' => $file_loc,
                 'FileName' => $file_id,
