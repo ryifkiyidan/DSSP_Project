@@ -243,7 +243,7 @@ if($this->session->userdata('role') == 'finance'){ // Jika role-nya finance
                                         <a class="mx-3 align-center text-primary" title="Action: Open" href="'.base_url($dok->location).'">
                                             <i class="fad fa-glasses-alt fa-4x"></i>
                                         </a>
-                                        <a class="mx-3 align-center text-danger" title="Action: Delete" href="'.base_url($dok->location).'">
+                                        <a class="mx-3 align-center text-danger" title="Action: Delete" href="'.base_url("index.php/action/delete?docid=$dok->dokumen_id").'">
                                             <i class="fad fa-trash-alt fa-4x"></i>
                                         </a>
                                     </div>

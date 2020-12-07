@@ -164,7 +164,22 @@ class Action extends MY_Controller {
     }
 
     public function delete(){
-
+        if($this->session->userdata('role') != 'finance') show_404();
+        $docId = $this->input->get('docid');
+        $where = array(
+            'dokumen_id' => $docId
+        );
+        $table = 'dokumen';
+        if (!$this->DatabaseModel->deleteData($where,$table)){
+            $data['msg'] = 'Document Deleted';
+            $data['status'] = true;
+            $this->session->set_flashdata('data', $data);
+        }else{
+            $data['msg'] = 'Cannot Delete Document';
+            $data['status'] = false;
+            $this->session->set_flashdata('data', $data);
+        }
+        redirect('page/dashboard'); // Redirect ke halaman dashboard
     }
 
     public function approve(){

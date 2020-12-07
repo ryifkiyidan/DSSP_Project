@@ -68,5 +68,10 @@ class DatabaseModel extends CI_Model {
 		$this->db->update($table,$data);
     }
 
+    public function deleteData($where, $table){
+        $this->db->where($where);
+        $this->db->delete($table);
+    }
+
 }
 ?>
