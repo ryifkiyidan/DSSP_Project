@@ -38,6 +38,15 @@ if($this->session->flashdata('message')){ // Jika ada
             <input type="file" class="custom-file-input" name="fileToUpload" id="fileToUpload" accept="image/*">
             <label class="custom-file-label" for="fileToUpload">Choose file</label>
         </div>
-		<button class = "btn btn-lg btn-primary btn-block" type = "submit" >Submit</button>
+		<button class="btn btn-lg btn-primary btn-block" type="submit" onClick="show_alert()" >Submit</button>
 	</form>
 </div>
+
+<script>
+  function show_alert() {
+    if(!confirm("Are you sure you want to register this signature? Once registered cannot be changed.")) {
+      return false;
+    }
+    this.form.submit();
+  }
+</script>
